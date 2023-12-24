@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image and Video Upload</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+      text-align: center;
+    }
+
+    h1 {
+      color: #0066cc;
+    }
+
+    .upload-section {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      margin: 0 auto;
+      margin-bottom: 40px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #0066cc;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0052a3;
+    }
+
+    #uploadedImage, #uploadedVideo {
+      max-width: 100%;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Image and Video Upload</h1>
+
+  <!-- Image Upload Section -->
+  <div class="upload-section" id="imageUploadSection">
+    <form action="/upload/image" method="post" enctype="multipart/form-data">
+      <label for="image">Choose Image File:</label>
+      <input type="file" name="image" id="image" accept="image/*" />
+      <button type="submit">Upload Image</button>
+    </form>
+
+    <!-- Display uploaded image here -->
+    <img id="uploadedImage" src="" alt="Uploaded Image" style="display: none;" />
+  </div>
+
+  <!-- Video Upload Section -->
+  <div class="upload-section" id="videoUploadSection">
+    <form action="/upload/video" method="post" enctype="multipart/form-data">
+      <label for="video">Choose Video File:</label>
+      <input type="file" name="video" id="video" accept="video/*" />
+      <button type="submit">Upload Video</button>
+    </form>
+
+    <!-- Display uploaded video here -->
+    <video id="uploadedVideo" width="320" height="240" controls style="display: none;">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <script>
+    // Image Upload
+    const imageForm = document.querySelector('#imageUploadSection form');
+    const uploadedImage = document.getElementById('uploadedImage');
+
+    imageForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(imageForm);
+      const response = await fetch('/upload/image', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Display the uploaded image
+        uploadedImage.src = `/uploads/${result.filename}`;
+        uploadedImage.style.display = 'block';
+      } else {
+        alert('Image upload failed. Please try again.');
+      }
+    });
+
+    // Video Upload
+    const videoForm = document.querySelector('#videoUploadSection form');
+    const uploadedVideo = document.getElementById('uploadedVideo');
+
+    videoForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(videoForm);
+      const response = await fetch('/upload/video', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Display the uploaded video
+        uploadedVideo.src = `/uploads/${result.filename}`;
+        uploadedVideo.style.display = 'block';
+      } else {
+        alert('Video upload failed. Please try again.');
+      }
+    });
+  </script>
+
+</body>
+</html>
